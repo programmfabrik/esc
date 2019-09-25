@@ -24,8 +24,8 @@ The flags are:
 	output filename, defaults to stdout
 -pkg="main"
 	package name of output file, defaults to main
--prefix=""
-	strip given prefix from filenames
+-local-prefix-cwd=false
+	Add local working directory absolute path as local prefix
 -ignore=""
 	regular expression for files to ignore
 -include=""

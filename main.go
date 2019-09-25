@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mjibson/esc/embed"
+	"github.com/programmfabrik/esc/embed"
 )
 
 func main() {
@@ -17,6 +17,7 @@ func main() {
 	flag.StringVar(&conf.OutputFile, "o", "", "Output file, else stdout.")
 	flag.StringVar(&conf.Package, "pkg", "main", "Package.")
 	flag.StringVar(&conf.Prefix, "prefix", "", "Prefix to strip from filesnames.")
+	flag.BoolVar(&conf.LocalPrefixCWD, "local-prefix-cwd", false, "Add local working directory absolute path as local prefix")
 	flag.StringVar(&conf.Ignore, "ignore", "", "Regexp for files we should ignore (for example \\\\.DS_Store).")
 	flag.StringVar(&conf.Include, "include", "", "Regexp for files to include. Only files that match will be included.")
 	flag.StringVar(&conf.ModTime, "modtime", "", "Unix timestamp to override as modification time for all files.")

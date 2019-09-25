@@ -29,6 +29,8 @@ type Config struct {
 	Package string
 	// Prefix is stripped from filenames.
 	Prefix string
+	// Prefix to add to the filenames on loading them from disks instead of in binary cache.
+	LocalPrefixCWD bool
 	// Ignore is the regexp for files we should ignore (for example `\.DS_Store`).
 	Ignore string
 	// Include is the regexp for files to include. If provided, only files that
@@ -55,6 +57,7 @@ type templateParams struct {
 	Invocation     string
 	PackageName    string
 	FunctionPrefix string
+	LocalPrefix    string
 	Files          []*_escFile
 	Dirs           []*_escDir
 }
@@ -86,6 +89,14 @@ func Run(conf *Config, out io.Writer) error {
 			return fmt.Errorf("modtime must be an integer: %v", err)
 		}
 		modTime = &i
+	}
+
+	localPrefix := ""
+	if conf.LocalPrefixCWD {
+		localPrefix, err = os.Getwd()
+		if err != nil {
+			return fmt.Errorf("could not get current workind directory: %v", err)
+		}
 	}
 
 	alreadyPrepared := make(map[string]bool, 10)
@@ -195,6 +206,7 @@ func Run(conf *Config, out io.Writer) error {
 		FunctionPrefix: functionPrefix,
 		Files:          escFiles,
 		Dirs:           directories,
+		LocalPrefix:    localPrefix,
 	})
 
 	fakeOutFileName := "static.go"
@@ -291,7 +303,7 @@ func (_escLocalFS) Open(name string) (http.File, error) {
 	if !present {
 		return nil, os.ErrNotExist
 	}
-	return os.Open(f.local)
+	return os.Open(path.Join("{{.LocalPrefix}}",f.local))
 }
 
 func (_escStaticFS) prepare(name string) (*_escFile, error) {
